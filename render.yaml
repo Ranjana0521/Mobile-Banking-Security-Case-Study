@@ -1,0 +1,23 @@
+(.venv) PS C:\Users\Ranjana\Downloads\mobile_banking_security_case_study> git push origin main
+To https://github.com/Ranjana0521/Mobile-Banking-Security-Case-Study.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to 'https://github.com/Ranjana0521/Mobile-Banking-Security-Case-Study.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. If you want to integrate the remote changes,
+hint: use 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+(.venv) PS C:\Users\Ranjana\Downloads\mobile_banking_security_case_study> 
+services:
+  - type: web
+    name: securebank-ranjana0521
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_SECRET
+        generateValue: true
+      - key: AES_KEY
+        sync: false
