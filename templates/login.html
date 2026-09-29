@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Secure Sign-In | SecureBank Mobile Banking{% endblock %}
+
+{% block content %}
+<div class="auth-page-wrapper">
+  <div class="auth-split-card">
+    <!-- Left Hero Panel -->
+    <div class="auth-hero-panel">
+      <div class="auth-hero-bg-shapes"></div>
+      <div class="auth-hero-content">
+        <span class="pill-badge pill-glow">SECURE ACCESS GATEWAY</span>
+        <h2 class="auth-hero-title">Protected by Verifiable Cryptography</h2>
+        <p class="auth-hero-desc">
+          Your credentials are never stored or compared in plaintext. Upon submission, password keys are derived using <strong>Scrypt</strong> with high CPU/memory cost to thwart GPU cluster attacks.
+        </p>
+
+        <div class="auth-security-checklist">
+          <div class="check-item">
+            <div class="check-icon">✓</div>
+            <div class="check-info">
+              <strong>Salted Scrypt Key Derivation</strong>
+              <span>16-byte random salt, N=16384, resistant to rainbow tables & brute force.</span>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-icon">✓</div>
+            <div class="check-info">
+              <strong>Anti-Phishing Mutual Authentication</strong>
+              <span>Your personal security phrase confirms you are connected to the genuine banking server.</span>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-icon">✓</div>
+            <div class="check-info">
+              <strong>Constant-Time Comparison</strong>
+              <span>Timing-attack resistant verification with HMAC digest matching.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-quick-credentials">
+          <span class="quick-title">DEMO ACCOUNTS READY TO TEST</span>
+          <div class="quick-pill-row">
+            <button type="button" class="quick-user-btn" onclick="fillLogin('Ranjana', 'secure1234')">
+              User: <strong>Ranjana</strong> (Balance: ₹4,000)
+            </button>
+            <button type="button" class="quick-user-btn" onclick="fillLogin('abc', 'password123')">
+              User: <strong>abc</strong> (Balance: ₹4,500)
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Form Panel -->
+    <div class="auth-form-panel">
+      <!-- Anti-Phishing Security Header -->
+      <div class="anti-phishing-banner">
+        <div class="ap-shield-icon">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="ap-text">
+          <span class="ap-title">SSL Pinning Verified · Official Domain</span>
+          <span class="ap-sub">Fingerprint SHA-256: <code>9B:2A:4F:18:C3...</code></span>
+        </div>
+      </div>
+
+      <div class="form-header">
+        <h2 class="form-title">Log in to SecureBank</h2>
+        <p class="form-subtitle">Enter your demo credentials to access the mobile banking dashboard.</p>
+      </div>
+
+      <form method="post" action="{{ url_for('login') }}" class="secure-form" id="login-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="form-group">
+          <label for="username" class="field-label">Username</label>
+          <div class="input-wrap">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+            <input type="text" id="username" name="username" class="form-input with-icon" placeholder="Enter username" required autocomplete="username">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <label for="password" class="field-label">Password</label>
+            <button type="button" class="link-btn-sm" id="toggle-virtual-keypad" onclick="toggleVirtualKeypad()">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="8" y1="8" x2="8.01" y2="8"/><line x1="12" y1="8" x2="12.01" y2="8"/><line x1="16" y1="8" x2="16.01" y2="8"/><line x1="8" y1="12" x2="8.01" y2="12"/><line x1="12" y1="12" x2="12.01" y2="12"/><line x1="16" y1="12" x2="16.01" y2="12"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="12" y1="16" x2="12.01" y2="16"/><line x1="16" y1="16" x2="16.01" y2="16"/></svg>
+              <span>Anti-Keylogger Keypad</span>
+            </button>
+          </div>
+          <div class="input-wrap">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
+            <input type="password" id="password" name="password" class="form-input with-icon with-eye" placeholder="Enter password" required autocomplete="current-password">
+            <button type="button" class="eye-toggle-btn" onclick="togglePasswordVisibility('password')" title="Toggle view">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+
+          <!-- Real-Time Typing Password Entropy Meter -->
+          <div class="entropy-meter-wrap" id="entropy-wrapper">
+            <div class="entropy-bar-track">
+              <div class="entropy-bar-fill" id="entropy-fill"></div>
+            </div>
+            <div class="entropy-text-row">
+              <span class="entropy-label" id="entropy-label">Entropy: 0 bits</span>
+              <span class="entropy-status" id="entropy-status">Enter password</span>
+            </div>
+          </div>
+
+          <!-- Virtual Scrambled Keypad Drawer (Anti-Malware Defense) -->
+          <div class="scrambled-keypad-box" id="virtual-keypad-box" style="display:none;">
+            <div class="keypad-header">
+              <span>🛡️ Anti-Keylogger Random Keypad</span>
+              <button type="button" class="btn-shuffle-keypad" onclick="shuffleKeypad()">Shuffle</button>
+            </div>
+            <div class="keypad-grid" id="keypad-digits">
+              <!-- Dynamically populated numbers 0-9 shuffled -->
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary-glow btn-full">
+          <span>Sign In Securely</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </form>
+
+      <div class="form-footer-nav">
+        <span>Don't have an account?</span>
+        <a href="{{ url_for('register') }}" class="link-highlight">Create a Demo Account</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function fillLogin(u, p) {
+  document.getElementById('username').value = u;
+  const pInput = document.getElementById('password');
+  pInput.value = p;
+  pInput.dispatchEvent(new Event('input'));
+}
+</script>
+{% endblock %}

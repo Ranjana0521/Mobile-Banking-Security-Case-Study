@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block title %}SecureBank | Mobile Banking Security Case Study{% endblock %}
+
+{% block content %}
+<div class="landing-hero-section">
+  <!-- Glowing background accents -->
+  <div class="hero-glow hero-glow-1"></div>
+  <div class="hero-glow hero-glow-2"></div>
+
+  <div class="hero-container">
+    <div class="hero-badge-row">
+      <span class="pill-badge pill-glow">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>COLLEGE CASE STUDY · CYBERSECURITY & CRYPTOGRAPHY</span>
+      </span>
+      <span class="pill-badge pill-neutral">Zero-Trust Mobile Architecture</span>
+    </div>
+
+    <h1 class="hero-title">
+      Securing Mobile Banking Against <br>
+      <span class="gradient-text">Malware, Phishing & Unauthorized Transfers</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      A defense-in-depth prototype implementing verifiable cryptographic algorithms: <strong>Scrypt KDF</strong> password hardening, <strong>AES-256-GCM</strong> authenticated encryption at rest, transaction-bound <strong>HMAC-SHA256</strong> OTP tokens, and a tamper-evident <strong>SHA-256</strong> audit chain.
+    </p>
+
+    <!-- Hero CTA Buttons -->
+    <div class="hero-cta-group">
+      {% if session.get('user_id') %}
+        <a href="{{ url_for('dashboard') }}" class="btn-primary-glow">
+          <span>Go to Mobile Dashboard</span>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="btn-primary-glow">
+          <span>Launch Secure Banking Demo</span>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a href="{{ url_for('register') }}" class="btn-secondary-glass">
+          <span>Create Demo Account (₹5,000)</span>
+        </a>
+      {% endif %}
+    </div>
+
+    <!-- Live Cryptographic Quick Metrics -->
+    <div class="hero-metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon-wrap icon-cyan">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="metric-info">
+          <div class="metric-val">AES-256-GCM</div>
+          <div class="metric-label">AEAD Authenticated Encryption</div>
+          <div class="metric-sub">96-bit Nonce + 128-bit GHASH Tag</div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon-wrap icon-green">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="metric-info">
+          <div class="metric-val">Scrypt KDF</div>
+          <div class="metric-label">Salted Memory-Hard Passwords</div>
+          <div class="metric-sub">N=16,384 · r=8 · p=1 · Resistant to ASIC/GPU</div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon-wrap icon-amber">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="metric-info">
+          <div class="metric-val">HMAC-SHA256</div>
+          <div class="metric-label">Transaction-Bound OTP</div>
+          <div class="metric-sub">Constant-time verification · 180s TTL</div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon-wrap icon-purple">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </div>
+        <div class="metric-info">
+          <div class="metric-val">SHA-256 Ledger</div>
+          <div class="metric-label">Tamper-Evident Chaining</div>
+          <div class="metric-sub">Mathematically verifiable audit trail</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Three Security Pillars Section (Mapped to Problem Statement) -->
+<section class="pillars-section">
+  <div class="section-container">
+    <div class="section-header text-center">
+      <span class="pill-badge pill-glow">THREAT MITIGATION MAPPING</span>
+      <h2 class="section-title">Addressing the Three Core Threat Vectors</h2>
+      <p class="section-subtitle">
+        How the proposed engineering and cryptographic solution neutralizes attacks defined in the case study.
+      </p>
+    </div>
+
+    <div class="pillars-grid">
+      <!-- Pillar 1 -->
+      <div class="pillar-card pillar-malware">
+        <div class="pillar-badge">THREAT VECTOR 01</div>
+        <div class="pillar-icon-box">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2a5 5 0 0 1 5 5v3a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5z"/>
+            <path d="M19 13v1a7 7 0 0 1-14 0v-1"/>
+            <path d="M12 21v-3"/>
+            <path d="M5 8l-2-2M19 8l2-2M2 14h3M19 14h3M5 19l2-2M19 19l-2-2"/>
+          </svg>
+        </div>
+        <h3 class="pillar-title">Mobile Malware Defense</h3>
+        <p class="pillar-desc">
+          Protects against banking trojans (SharkBot, TeaBot), malicious accessibility services, and screen tap-loggers.
+        </p>
+        <ul class="pillar-features">
+          <li>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>Anti-Keylogger Scrambled Keypad:</strong> Dynamically randomizes numeric coordinates to blind touch-logging malware.</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>RASP Integrity Attestation:</strong> Detects debugger attachment, Frida instrumentation hooks, and root exploits.</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>Anti-Overlay Shielding:</strong> Prevents unauthorized floating overlay windows from hijacking PINs or OTP inputs.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Pillar 2 -->
+      <div class="pillar-card pillar-phishing">
+        <div class="pillar-badge">THREAT VECTOR 02</div>
+        <div class="pillar-icon-box">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+            <path d="M2 12h20"/>
+          </svg>
+        </div>
+        <h3 class="pillar-title">Anti-Phishing & Spoofing</h3>
+        <p class="pillar-desc">
+          Defeats fake banking portals, DNS poisoning, cloned smishing links, and credential-harvesting phishing kits.
+        </p>
+        <ul class="pillar-features">
+          <li>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>Mutual Visual Secret Phrase:</strong> A server-held personal emblem and passphrase displayed exclusively on authentic sessions.</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>SSL/TLS Certificate Pinning:</strong> Validates SHA-256 fingerprint of the bank's public key, preventing MITM proxies.</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>Real-Time Link Analyzer:</strong> Real-time heuristic scanning of URLs for typosquatting, Punycode, and suspicious TLDs.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Pillar 3 -->
+      <div class="pillar-card pillar-unauthorized">
+        <div class="pillar-badge">THREAT VECTOR 03</div>
+        <div class="pillar-icon-box">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <circle cx="12" cy="11" r="3"/>
+            <path d="M12 14v3"/>
+          </svg>
+        </div>
+        <h3 class="pillar-title">Unauthorized Transactions</h3>
+        <p class="pillar-desc">
+          Mitigates account takeovers, unauthorized fund transfers, payload tampering, and replay attacks.
+        </p>
+        <ul class="pillar-features">
+          <li>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>Dynamic HMAC-SHA256 OTP:</strong> MFA token bound to recipient + amount; cannot be replayed for another transaction.</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>AES-256-GCM AEAD at Rest:</strong> Encrypted with GHASH authentication tags; any bit-flip tampering triggers immediate rejection.</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>Adaptive Risk Scoring Engine:</strong> Real-time screening of transaction velocity, high-amount anomalies, and device trust.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Interactive Real-Time Quick Sandbox Section -->
+<section class="landing-crypto-sandbox">
+  <div class="section-container">
+    <div class="sandbox-glass-card">
+      <div class="sandbox-header">
+        <div>
+          <span class="pill-badge pill-glow">INTERACTIVE CRYPTOGRAPHIC PLAYGROUND</span>
+          <h2 class="sandbox-title">Test Cryptographic Primitives in Real Time</h2>
+          <p class="sandbox-desc">Type below to see instant cryptographic derivation and authenticated encryption.</p>
+        </div>
+        <div class="sandbox-mode-badges">
+          <span class="mode-badge">RFC 7914 Scrypt</span>
+          <span class="mode-badge">NIST SP 800-38D AES-GCM</span>
+          <span class="mode-badge">RFC 2104 HMAC</span>
+        </div>
+      </div>
+
+      <div class="sandbox-grid">
+        <div class="sandbox-input-col">
+          <label class="field-label" for="sandbox-input">Live Input Plaintext / Password</label>
+          <div class="input-with-action">
+            <input type="text" id="sandbox-input" class="form-input" value="SuperSecureBankDemo#2026" placeholder="Type anything...">
+            <button type="button" class="btn-inline" id="btn-run-sandbox">Compute Live</button>
+          </div>
+          <div class="realtime-typing-hint">
+            <span class="live-dot"></span> Computes Scrypt KDF + AES-256-GCM in real time
+          </div>
+        </div>
+
+        <div class="sandbox-results-col">
+          <div class="result-tile">
+            <div class="tile-head">
+              <span class="tile-title">AES-256-GCM Nonce (96-bit Random Hex)</span>
+              <span class="tile-tag">AEAD Initializer</span>
+            </div>
+            <code class="tile-code" id="sb-nonce">Generating...</code>
+          </div>
+
+          <div class="result-tile">
+            <div class="tile-head">
+              <span class="tile-title">AES-256-GCM Auth Tag (128-bit GHASH)</span>
+              <span class="tile-tag tag-green">Tamper-Proof Guarantee</span>
+            </div>
+            <code class="tile-code" id="sb-tag">Generating...</code>
+          </div>
+
+          <div class="result-tile">
+            <div class="tile-head">
+              <span class="tile-title">Scrypt Derived Key (256-bit Hex)</span>
+              <span class="tile-tag tag-cyan">Memory-Hard KDF</span>
+            </div>
+            <code class="tile-code" id="sb-scrypt">Generating...</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="sandbox-footer">
+        <div class="sandbox-hint">
+          <strong>Try tampering:</strong> Notice how each encryption generates a cryptographically unique 96-bit nonce and authentication tag. If any single bit is altered, decryption throws <code>InvalidTag</code>.
+        </div>
+        <a href="{{ url_for('login') }}" class="btn-gradient-sm">Test in Live Banking App →</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

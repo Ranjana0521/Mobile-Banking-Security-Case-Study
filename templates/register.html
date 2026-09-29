@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Create Account | SecureBank Mobile Banking{% endblock %}
+
+{% block content %}
+<div class="auth-page-wrapper">
+  <div class="auth-split-card">
+    <!-- Left Hero Panel -->
+    <div class="auth-hero-panel">
+      <div class="auth-hero-bg-shapes"></div>
+      <div class="auth-hero-content">
+        <span class="pill-badge pill-glow">NEW ENROLLMENT</span>
+        <h2 class="auth-hero-title">Zero-Plaintext Account Architecture</h2>
+        <p class="auth-hero-desc">
+          When you register, your password is immediately salted with 16 cryptographically random bytes and passed through <strong>Scrypt</strong> with 16,384 rounds.
+        </p>
+
+        <div class="auth-security-checklist">
+          <div class="check-item">
+            <div class="check-icon">₹</div>
+            <div class="check-info">
+              <strong>Simulated Demo Balance</strong>
+              <span>Every newly enrolled student account is preloaded with ₹5,000 in simulated funds.</span>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-icon">🛡️</div>
+            <div class="check-info">
+              <strong>Anti-Phishing Secret Phrase</strong>
+              <span>Establish your mutual authentication secret to guarantee genuine server connection.</span>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-icon">🔒</div>
+            <div class="check-info">
+              <strong>AES-256-GCM AEAD Ledger</strong>
+              <span>All outgoing transactions are encrypted with unique nonces and integrity tags.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="crypto-formula-box">
+          <span class="formula-title">KDF ALGORITHM FORMULA</span>
+          <code>Key = scrypt(P, S, N=16384, r=8, p=1, dkLen=32)</code>
+          <p class="formula-desc">Requires 16MB RAM per attempt, making parallel ASIC/FPGA cracking economically infeasible.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Form Panel -->
+    <div class="auth-form-panel">
+      <div class="form-header">
+        <h2 class="form-title">Open Demo Account</h2>
+        <p class="form-subtitle">Set up your username and establish your anti-phishing secret badge.</p>
+      </div>
+
+      <form method="post" action="{{ url_for('register') }}" class="secure-form" id="register-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="form-group">
+          <label for="reg-username" class="field-label">Username</label>
+          <div class="input-wrap">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+            <input type="text" id="reg-username" name="username" class="form-input with-icon" placeholder="Choose username (min 3 chars)" required minlength="3" autocomplete="username">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-password" class="field-label">Password</label>
+          <div class="input-wrap">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
+            <input type="password" id="reg-password" name="password" class="form-input with-icon with-eye" placeholder="At least 8 characters" required minlength="8" autocomplete="new-password">
+            <button type="button" class="eye-toggle-btn" onclick="togglePasswordVisibility('reg-password')" title="Toggle view">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+
+          <!-- Real-Time Typing Password Entropy Meter -->
+          <div class="entropy-meter-wrap" id="reg-entropy-wrapper">
+            <div class="entropy-bar-track">
+              <div class="entropy-bar-fill" id="reg-entropy-fill"></div>
+            </div>
+            <div class="entropy-text-row">
+              <span class="entropy-label" id="reg-entropy-label">Entropy: 0 bits</span>
+              <span class="entropy-status" id="reg-entropy-status">Too short</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mutual Authentication: Anti-Phishing Secret Phrase Selection -->
+        <div class="form-group">
+          <div class="label-row">
+            <label class="field-label">Anti-Phishing Secret Phrase</label>
+            <span class="badge-tooltip" title="Displayed only on official SecureBank domain to prove server authenticity">Mutual Auth</span>
+          </div>
+          <p class="field-hint">Pick an icon & phrase. Genuine SecureBank screens will display this phrase so you can spot phishing copies.</p>
+          <div class="secret-phrase-selector">
+            <label class="phrase-option">
+              <input type="radio" name="security_phrase" value="🛡️ Emerald Falcon" checked>
+              <span class="phrase-pill">🛡️ Emerald Falcon</span>
+            </label>
+            <label class="phrase-option">
+              <input type="radio" name="security_phrase" value="⚡ Golden Shield">
+              <span class="phrase-pill">⚡ Golden Shield</span>
+            </label>
+            <label class="phrase-option">
+              <input type="radio" name="security_phrase" value="🌊 Azure Phoenix">
+              <span class="phrase-pill">🌊 Azure Phoenix</span>
+            </label>
+            <label class="phrase-option">
+              <input type="radio" name="security_phrase" value="🔒 Quantum Vault">
+              <span class="phrase-pill">🔒 Quantum Vault</span>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary-glow btn-full">
+          <span>Create Account & Derive Scrypt Hash</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </form>
+
+      <div class="form-footer-nav">
+        <span>Already have an account?</span>
+        <a href="{{ url_for('login') }}" class="link-highlight">Log in to SecureBank</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,627 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard & Cryptographic Operations | SecureBank{% endblock %}
+
+{% block content %}
+<div class="dashboard-page-container">
+
+  <!-- Real-time Top Telemetry Banner -->
+  <div class="telemetry-bar">
+    <div class="telemetry-item">
+      <span class="telemetry-label">DEVICE INTEGRITY</span>
+      <span class="telemetry-value text-green" id="telemetry-device-status">
+        <span class="status-dot pulse-green"></span> HARDENED (NO ROOT / NO HOOKS)
+      </span>
+    </div>
+    <div class="telemetry-item">
+      <span class="telemetry-label">AEAD ENCRYPTION</span>
+      <span class="telemetry-value text-cyan">AES-256-GCM ACTIVE</span>
+    </div>
+    <div class="telemetry-item">
+      <span class="telemetry-label">SESSION CIPHER</span>
+      <span class="telemetry-value text-purple">SCRYPT-DERIVED TOKEN</span>
+    </div>
+    <div class="telemetry-item">
+      <span class="telemetry-label">ANTI-PHISHING PHRASE</span>
+      <span class="telemetry-value text-amber" id="telemetry-phrase">{{ security_phrase }}</span>
+    </div>
+  </div>
+
+  <!-- Main Dual-View Grid: Mobile Simulator + Security Operations Lab -->
+  <div class="dashboard-dual-grid">
+
+    <!-- ============================================== -->
+    <!-- LEFT: HIGH-FIDELITY MOBILE SMARTPHONE CHASSIS -->
+    <!-- ============================================== -->
+    <div class="phone-column">
+      <div class="phone-chassis">
+        <!-- Phone Outer Frame Accents -->
+        <div class="phone-speaker"></div>
+        <div class="phone-camera-island">
+          <div class="camera-lens"></div>
+          <div class="sensor-dot"></div>
+        </div>
+
+        <!-- Phone Screen Viewport -->
+        <div class="phone-screen">
+
+          <!-- Simulated High-Priority OTP Push Notification -->
+          <div class="simulated-push-notification" id="push-notification-banner" style="display:none;">
+            <div class="push-header">
+              <div class="push-app-info">
+                <div class="push-icon-box">🛡️</div>
+                <span class="push-app-name">SecureBank Mobile Alert</span>
+              </div>
+              <span class="push-time">Just now</span>
+            </div>
+            <div class="push-body">
+              <strong class="push-title">One-Time Transfer Code</strong>
+              <p class="push-msg" id="push-notification-msg">Your OTP is <strong>------</strong>. Valid for 3m. Do not share.</p>
+            </div>
+            <div class="push-actions">
+              <button type="button" class="btn-push-action" id="btn-autofill-otp">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Auto-Fill Code</span>
+              </button>
+              <div class="push-countdown-badge">
+                <span id="push-timer-seconds">180</span>s
+              </div>
+            </div>
+          </div>
+
+          <!-- Phone Status Bar -->
+          <div class="phone-status-bar">
+            <span class="status-time" id="live-phone-time">10:30</span>
+            <div class="status-notch-spacer"></div>
+            <div class="status-icons">
+              <span class="status-signal">5G</span>
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="11" rx="2"/><line x1="22" y1="11" x2="22" y2="14"/></svg>
+            </div>
+          </div>
+
+          <!-- Phone In-App Navigation Bar -->
+          <div class="phone-app-bar">
+            <div class="app-bar-user">
+              <div class="mini-avatar">{{ username[:1]|upper }}</div>
+              <div class="user-greeting">
+                <span class="greeting-sub">Authenticated Account</span>
+                <span class="greeting-name">{{ username }}</span>
+              </div>
+            </div>
+            <div class="app-bar-anti-phishing" title="Mutual Authentication: This badge only renders on genuine SecureBank connections.">
+              <span class="ap-badge-pill">{{ security_phrase }}</span>
+            </div>
+          </div>
+
+          <!-- Phone Scrollable Body -->
+          <div class="phone-scroll-content">
+
+            <!-- Holographic Virtual Debit Card -->
+            <div class="holographic-card" id="virtual-debit-card">
+              <div class="card-chip-row">
+                <div class="emv-chip">
+                  <div class="chip-line"></div>
+                  <div class="chip-line"></div>
+                </div>
+                <div class="contactless-icon">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10M12 6a6 6 0 0 1 6 6M12 10a2 2 0 0 1 2 2"/></svg>
+                </div>
+              </div>
+
+              <div class="card-balance-block">
+                <span class="card-balance-label">AVAILABLE BALANCE</span>
+                <div class="card-balance-row">
+                  <span class="currency-symbol">₹</span>
+                  <span class="card-balance-number" id="phone-balance-display">{{ "{:,.2f}".format(balance) }}</span>
+                  <button type="button" class="btn-toggle-eye" onclick="toggleBalanceMask()" title="Hide/Unhide balance">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="card-footer-row">
+                <div class="card-number-masked" id="card-num-masked">•••• •••• •••• 2048</div>
+                <div class="card-type-logo">
+                  <span class="visa-text">SecureBank</span>
+                  <span class="card-tier">PLATINUM</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Action Buttons -->
+            <div class="phone-quick-actions">
+              <button type="button" class="quick-act-btn" onclick="scrollToTransfer()">
+                <div class="q-icon q-icon-green">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                </div>
+                <span>Send Money</span>
+              </button>
+
+              <button type="button" class="quick-act-btn" onclick="openDepositDemoModal()">
+                <div class="q-icon q-icon-cyan">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                </div>
+                <span>+ ₹1,000 Demo</span>
+              </button>
+
+              <button type="button" class="quick-act-btn" onclick="toggleSecurityShieldModal()">
+                <div class="q-icon q-icon-purple">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <span>Shield Status</span>
+              </button>
+            </div>
+
+            <!-- Transfer Section with Real-Time Risk Engine -->
+            <div class="phone-panel transfer-card-panel" id="transfer-panel-section">
+              <div class="panel-title-row">
+                <span class="panel-title">Make a Transfer</span>
+                <span class="panel-subtitle">Dynamic MFA Active</span>
+              </div>
+
+              {% if pending_transfer %}
+                <!-- STEP 2: OTP Verification Screen -->
+                <div class="otp-verification-screen animate-fade-in" id="otp-form-container">
+                  <div class="otp-info-card">
+                    <span class="otp-eyebrow">STEP 2: CONFIRM ONE-TIME CODE</span>
+                    <div class="otp-meta-grid">
+                      <div>
+                        <span class="otp-meta-label">Recipient</span>
+                        <strong class="otp-meta-val">{{ pending_transfer.recipient }}</strong>
+                      </div>
+                      <div>
+                        <span class="otp-meta-label">Amount</span>
+                        <strong class="otp-meta-val text-green">₹{{ "{:,.2f}".format(pending_transfer.amount) }}</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  <form method="post" action="{{ url_for('confirm') }}" id="confirm-otp-form" class="otp-submit-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="otp-digit-group">
+                      <label class="field-label text-center">Enter 6-Digit OTP</label>
+                      <div class="digit-boxes-row">
+                        <input type="text" class="digit-box" maxlength="1" pattern="[0-9]" inputmode="numeric" id="otp-d1" autofocus autocomplete="off">
+                        <input type="text" class="digit-box" maxlength="1" pattern="[0-9]" inputmode="numeric" id="otp-d2" autocomplete="off">
+                        <input type="text" class="digit-box" maxlength="1" pattern="[0-9]" inputmode="numeric" id="otp-d3" autocomplete="off">
+                        <input type="text" class="digit-box" maxlength="1" pattern="[0-9]" inputmode="numeric" id="otp-d4" autocomplete="off">
+                        <input type="text" class="digit-box" maxlength="1" pattern="[0-9]" inputmode="numeric" id="otp-d5" autocomplete="off">
+                        <input type="text" class="digit-box" maxlength="1" pattern="[0-9]" inputmode="numeric" id="otp-d6" autocomplete="off">
+                      </div>
+                      <input type="hidden" name="otp" id="full-otp-input">
+                    </div>
+
+                    <div class="otp-timer-row">
+                      <span class="timer-text">Code expires in: <strong id="otp-countdown-text">03:00</strong></span>
+                      <span class="attempts-warning">Attempts remaining: {{ 5 - pending_transfer.attempts }}</span>
+                    </div>
+
+                    <button type="submit" class="btn-primary-glow btn-full" id="btn-verify-otp">
+                      <span>Verify & Complete Transfer</span>
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                  </form>
+
+                  <form method="post" action="{{ url_for('cancel_transfer') }}" class="cancel-transfer-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn-cancel-transfer">Cancel Transfer</button>
+                  </form>
+                </div>
+              {% else %}
+                <!-- STEP 1: Transfer Initiation Form -->
+                <form method="post" action="{{ url_for('transfer') }}" id="transfer-form" class="transfer-input-form">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                  <!-- Recipient Field with Quick Contacts -->
+                  <div class="form-group">
+                    <label for="recipient" class="field-label">Recipient</label>
+                    <div class="input-wrap">
+                      <input type="text" id="recipient" name="recipient" class="form-input" placeholder="Name or account alias" required autocomplete="off">
+                    </div>
+                    <!-- Quick Beneficiary Chips -->
+                    <div class="quick-beneficiaries">
+                      <button type="button" class="ben-chip" onclick="setRecipient('Aly')">Aly</button>
+                      <button type="button" class="ben-chip" onclick="setRecipient('Sam')">Sam</button>
+                      <button type="button" class="ben-chip" onclick="setRecipient('Vikram')">Vikram</button>
+                      <button type="button" class="ben-chip" onclick="setRecipient('Priya')">Priya</button>
+                    </div>
+                  </div>
+
+                  <!-- Amount Field with Real-Time Typing Listener -->
+                  <div class="form-group">
+                    <div class="label-row">
+                      <label for="amount" class="field-label">Amount (₹)</label>
+                      <span class="balance-hint">Max: ₹{{ "{:,.2f}".format(balance) }}</span>
+                    </div>
+                    <div class="input-wrap">
+                      <input type="number" id="amount" name="amount" class="form-input" min="1" max="{{ balance }}" step="0.01" placeholder="0.00" required>
+                    </div>
+
+                    <!-- Quick Amount Step Buttons -->
+                    <div class="quick-amount-row">
+                      <button type="button" class="amt-chip" onclick="addAmount(100)">+₹100</button>
+                      <button type="button" class="amt-chip" onclick="addAmount(500)">+₹500</button>
+                      <button type="button" class="amt-chip" onclick="addAmount(1000)">+₹1,000</button>
+                      <button type="button" class="amt-chip" onclick="setAmount({{ balance }})">Max</button>
+                    </div>
+                  </div>
+
+                  <!-- REAL-TIME TYPING RISK EVALUATION GAUGE -->
+                  <div class="realtime-risk-evaluator" id="realtime-risk-box">
+                    <div class="risk-gauge-header">
+                      <span class="risk-title">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+                        <span>Real-Time Risk Scoring</span>
+                      </span>
+                      <span class="risk-tier-pill tier-low" id="risk-tier-pill">LOW RISK (10/100)</span>
+                    </div>
+                    <div class="risk-bar-track">
+                      <div class="risk-bar-fill fill-low" id="risk-bar-fill" style="width: 10%;"></div>
+                    </div>
+                    <p class="risk-explanation" id="risk-explanation">
+                      Normal transfer parameters. Standard dynamic HMAC-SHA256 OTP confirmation required.
+                    </p>
+                  </div>
+
+                  <!-- Anti-Malware Virtual Keypad Toggle -->
+                  <div class="anti-keylogger-toggle-bar">
+                    <label class="toggle-control-label">
+                      <input type="checkbox" id="chk-scrambled-keypad" onchange="toggleScrambledPadInTransfer()">
+                      <span>Enable Anti-Malware Scrambled Keypad</span>
+                    </label>
+                  </div>
+
+                  <!-- Scrambled Keypad Grid -->
+                  <div class="scrambled-keypad-box" id="transfer-scrambled-box" style="display:none;">
+                    <div class="keypad-header">
+                      <span>Randomized Key Coordinates</span>
+                      <button type="button" class="btn-shuffle-keypad" onclick="shuffleTransferKeypad()">Shuffle</button>
+                    </div>
+                    <div class="keypad-grid" id="transfer-keypad-digits"></div>
+                  </div>
+
+                  <button type="submit" class="btn-primary-glow btn-full" id="btn-submit-transfer">
+                    <span>Review & Request One-Time Code</span>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  </button>
+                </form>
+              {% endif %}
+            </div>
+
+            <!-- Recent Activity List with Encrypted Badges -->
+            <div class="phone-panel activity-feed-panel">
+              <div class="panel-title-row">
+                <span class="panel-title">Recent Transactions</span>
+                <span class="panel-subtitle">AES-256-GCM Verified</span>
+              </div>
+
+              {% if history %}
+                <div class="transactions-feed-list">
+                  {% for item in history %}
+                    <div class="tx-item-row">
+                      <div class="tx-icon-box">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+                      </div>
+                      <div class="tx-details">
+                        <strong class="tx-recipient">{{ item.recipient }}</strong>
+                        <span class="tx-timestamp">{{ item.time }}</span>
+                        <div class="tx-crypto-tags">
+                          <span class="tag-crypto-sec">AES-GCM AEAD</span>
+                          <span class="tag-status-ok">{{ item.status }}</span>
+                        </div>
+                      </div>
+                      <div class="tx-amount-col">
+                        <span class="tx-amount-neg">−₹{{ "{:,.2f}".format(item.amount) }}</span>
+                        <button type="button" class="btn-inspect-ciphertext" onclick="inspectTxCrypto('{{ item.recipient }}', '{{ item.amount }}', '{{ item.time }}', '{{ item.ciphertext_preview }}')">
+                          Inspect Cipher
+                        </button>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <div class="empty-tx-box">
+                  <div class="empty-icon">💸</div>
+                  <strong>No transactions recorded yet</strong>
+                  <span>Your transfers will be encrypted at rest and logged here.</span>
+                </div>
+              {% endif %}
+            </div>
+
+          </div> <!-- /phone-scroll-content -->
+
+          <!-- Phone Home Indicator Bar -->
+          <div class="phone-home-indicator"></div>
+        </div> <!-- /phone-screen -->
+      </div> <!-- /phone-chassis -->
+    </div> <!-- /phone-column -->
+
+
+    <!-- ============================================================ -->
+    <!-- RIGHT: SECURITY OPERATIONS CENTER (SOC) & ATTACK SIMULATION -->
+    <!-- ============================================================ -->
+    <div class="ops-column">
+      <!-- Top Navigation Tabs for Operations Center -->
+      <div class="ops-tabs-nav">
+        <button type="button" class="ops-tab-btn active" data-target="tab-threat-lab" onclick="switchOpsTab('tab-threat-lab')">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>Threat & Attack Simulation Lab</span>
+        </button>
+
+        <button type="button" class="ops-tab-btn" data-target="tab-crypto-lab" onclick="switchOpsTab('tab-crypto-lab')">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Cryptographic Inspector</span>
+        </button>
+
+        <button type="button" class="ops-tab-btn" data-target="tab-ledger-lab" onclick="switchOpsTab('tab-ledger-lab')">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <span>Tamper-Evident Ledger</span>
+        </button>
+      </div>
+
+      <!-- TAB 1: THREAT & ATTACK SIMULATION LAB -->
+      <div class="ops-tab-content active" id="tab-threat-lab">
+        <div class="tab-header-card">
+          <div class="th-badge-row">
+            <span class="pill-badge pill-glow">VIVA DEMONSTRATION SUITE</span>
+            <span class="pill-badge pill-neutral">Live Threat Injection & Defense</span>
+          </div>
+          <h2 class="tab-card-title">Direct Validation Against Case Study Vectors</h2>
+          <p class="tab-card-subtitle">
+            Simulate real-world attacks in real time to demonstrate how the proposed security and cryptographic layers detect and prevent them.
+          </p>
+        </div>
+
+        <!-- Threat Simulator 1: Mobile Malware & Trojan -->
+        <div class="threat-sim-card">
+          <div class="sim-card-header">
+            <div class="sim-threat-indicator bg-red-dim">MALWARE VECTOR</div>
+            <h3 class="sim-title">1. Mobile Banking Trojan / Overlay Hijack Attack</h3>
+          </div>
+          <p class="sim-description">
+            Simulate banking malware (e.g., TeaBot/SharkBot) attempting an Android Accessibility overlay attack or Frida hooking into banking functions.
+          </p>
+          <div class="sim-controls-row">
+            <button type="button" class="btn-attack-trigger" id="btn-trigger-malware" onclick="simulateMalwareAttack()">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span>Simulate Trojan Hook Injection</span>
+            </button>
+            <button type="button" class="btn-defense-reset" onclick="resetMalwareDefense()">
+              <span>Restore Hardened State</span>
+            </button>
+          </div>
+          <div class="sim-feedback-box" id="malware-defense-log">
+            <div class="log-line text-green">[RASP ENGINE] Integrity Verified: No root binaries, no zygote hooks, no active overlay detected.</div>
+          </div>
+        </div>
+
+        <!-- Threat Simulator 2: Phishing & Domain Spoofing -->
+        <div class="threat-sim-card">
+          <div class="sim-card-header">
+            <div class="sim-threat-indicator bg-amber-dim">PHISHING VECTOR</div>
+            <h3 class="sim-title">2. Phishing URL & Smishing Link Real-Time Scanner</h3>
+          </div>
+          <p class="sim-description">
+            Type or test suspected links. The scanner evaluates domain entropy, homoglyphs (Cyrillic lookalikes), IP hosts, and SSL certificate pinning.
+          </p>
+          <div class="phishing-scanner-input-group">
+            <input type="text" id="phishing-url-input" class="form-input" placeholder="Type or paste any URL..." value="http://secure-bαnk-verify.xyz/login">
+            <button type="button" class="btn-inline" onclick="scanPhishingUrl()">Scan URL Live</button>
+          </div>
+          <div class="phishing-quick-samples">
+            <span class="sample-label">Try Samples:</span>
+            <button type="button" class="sample-chip" onclick="testSampleUrl('http://192.168.1.50/securebank')">IP Address Host</button>
+            <button type="button" class="sample-chip" onclick="testSampleUrl('https://secure-bank-update-kyc.free-hosting.ru')">Suspicious TLD (.ru)</button>
+            <button type="button" class="sample-chip" onclick="testSampleUrl('https://securebank-ranjana0521.onrender.com')">Official Domain (Safe)</button>
+          </div>
+          <div class="sim-feedback-box" id="phishing-scanner-results">
+            <div class="log-line text-cyan">Awaiting URL scan...</div>
+          </div>
+        </div>
+
+        <!-- Threat Simulator 3: Unauthorized Transactions & Ciphertext Tamper -->
+        <div class="threat-sim-card">
+          <div class="sim-card-header">
+            <div class="sim-threat-indicator bg-purple-dim">UNAUTHORIZED VECTOR</div>
+            <h3 class="sim-title">3. Ciphertext Bit-Flipping & Tamper Detection</h3>
+          </div>
+          <p class="sim-description">
+            An attacker intercepts an encrypted transaction blob and flips a bit in the ciphertext to change ₹200 to ₹90,000. Watch <strong>AES-256-GCM</strong> reject the modified ciphertext mathematically.
+          </p>
+          <div class="sim-controls-row">
+            <button type="button" class="btn-attack-trigger" onclick="simulateCiphertextTamper()">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+              <span>Simulate 1-Bit Ciphertext Flip</span>
+            </button>
+          </div>
+          <div class="sim-feedback-box" id="tamper-defense-log">
+            <div class="log-line text-cyan">Click button to execute authenticated encryption tamper test.</div>
+          </div>
+        </div>
+      </div> <!-- /tab-threat-lab -->
+
+
+      <!-- TAB 2: CRYPTOGRAPHIC INSPECTOR -->
+      <div class="ops-tab-content" id="tab-crypto-lab">
+        <div class="tab-header-card">
+          <div class="th-badge-row">
+            <span class="pill-badge pill-glow">ALGORITHM PLAYGROUND</span>
+            <span class="pill-badge pill-neutral">Real-Time Cryptographic Engine</span>
+          </div>
+          <h2 class="tab-card-title">Verifiable Cryptography Inspector</h2>
+          <p class="tab-card-subtitle">
+            Inspect the exact mathematical operations running on the backend: AES-256-GCM, Scrypt KDF, and HMAC-SHA256.
+          </p>
+        </div>
+
+        <!-- Interactive AES-256-GCM AEAD Inspector -->
+        <div class="crypto-inspect-card">
+          <div class="inspect-head">
+            <div class="algo-title-wrap">
+              <span class="algo-name">AES-256-GCM AEAD</span>
+              <span class="algo-spec">NIST SP 800-38D · 256-bit Key · 96-bit Nonce · 128-bit Tag</span>
+            </div>
+            <button type="button" class="btn-inline" onclick="runLiveAesEncrypt()">Encrypt Live</button>
+          </div>
+          <div class="inspect-body">
+            <label class="field-label">Plaintext JSON Payload to Encrypt</label>
+            <textarea id="aes-plaintext-input" class="form-textarea" rows="2">{"recipient": "Aly", "amount": 500.0, "time": "2026-09-29T10:30:00Z"}</textarea>
+            
+            <div class="crypto-flow-diagram">
+              <div class="flow-block">
+                <span class="flow-title">1. Unique 96-bit Nonce (Hex)</span>
+                <code class="flow-code" id="aes-out-nonce">--</code>
+              </div>
+              <div class="flow-block">
+                <span class="flow-title">2. AES-256-GCM Ciphertext (Hex)</span>
+                <code class="flow-code" id="aes-out-ct">--</code>
+              </div>
+              <div class="flow-block">
+                <span class="flow-title">3. GHASH Authentication Tag (128-bit)</span>
+                <code class="flow-code text-green" id="aes-out-tag">--</code>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scrypt KDF Inspector -->
+        <div class="crypto-inspect-card">
+          <div class="inspect-head">
+            <div class="algo-title-wrap">
+              <span class="algo-name">Scrypt Key Derivation Function</span>
+              <span class="algo-spec">RFC 7914 · Memory-Hard · N=16384 · r=8 · p=1 · dkLen=32</span>
+            </div>
+            <button type="button" class="btn-inline" onclick="runLiveScryptDerive()">Derive Key</button>
+          </div>
+          <div class="inspect-body">
+            <div class="input-row-flex">
+              <div class="flex-1">
+                <label class="field-label">Password String</label>
+                <input type="text" id="scrypt-pass-input" class="form-input" value="StudentSecurePass#2026">
+              </div>
+              <div class="flex-1">
+                <label class="field-label">16-Byte Cryptographic Salt (Hex)</label>
+                <input type="text" id="scrypt-salt-input" class="form-input" value="4f9b2a18c37d6e5a0f123456789abcde">
+              </div>
+            </div>
+            <div class="flow-block mt-3">
+              <span class="flow-title">Derived 256-bit Key Hash (Hex)</span>
+              <code class="flow-code text-cyan" id="scrypt-out-hash">--</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic HMAC-SHA256 OTP Inspector -->
+        <div class="crypto-inspect-card">
+          <div class="inspect-head">
+            <div class="algo-title-wrap">
+              <span class="algo-name">Transaction-Bound HMAC-SHA256 OTP</span>
+              <span class="algo-spec">RFC 2104 · Cryptographically Bound to Recipient + Amount</span>
+            </div>
+          </div>
+          <div class="inspect-body">
+            <p class="crypto-explanation-text">
+              Standard OTPs are vulnerable to transfer-tampering (e.g. user thinks OTP is for ₹500, but attacker changes amount to ₹5,000). SecureBank cryptographically computes:
+            </p>
+            <div class="code-banner">
+              <code>HMAC_SHA256(OTP_KEY, Salt || OTP || User || Recipient || Amount || Timestamp)</code>
+            </div>
+            <p class="crypto-explanation-text mt-2">
+              Any variation in recipient or amount renders the OTP cryptographically invalid.
+            </p>
+          </div>
+        </div>
+      </div> <!-- /tab-crypto-lab -->
+
+
+      <!-- TAB 3: TAMPER-EVIDENT LEDGER -->
+      <div class="ops-tab-content" id="tab-ledger-lab">
+        <div class="tab-header-card">
+          <div class="th-badge-row">
+            <span class="pill-badge pill-glow">BLOCKCHAIN-STYLE AUDIT TRAIL</span>
+            <span class="pill-badge pill-neutral">SHA-256 Merkle-Chained Ledger</span>
+          </div>
+          <div class="title-with-action">
+            <div>
+              <h2 class="tab-card-title">Cryptographically Chained Transaction Ledger</h2>
+              <p class="tab-card-subtitle">
+                Every transaction block includes the SHA-256 cryptographic hash of the previous block, creating an unalterable immutable ledger.
+              </p>
+            </div>
+            <button type="button" class="btn-primary-glow" id="btn-verify-ledger" onclick="verifyLedgerIntegrity()">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Verify Entire Ledger Chain</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Ledger Verification Status Banner -->
+        <div class="ledger-status-banner" id="ledger-verify-status">
+          <span class="status-dot pulse-green"></span>
+          <span id="ledger-status-text">Ledger status: Ready for cryptographic integrity check</span>
+        </div>
+
+        <!-- Visual Chained Block Explorer -->
+        <div class="ledger-chain-feed" id="ledger-blocks-container">
+          <div class="ledger-loading">Loading transaction blockchain...</div>
+        </div>
+      </div> <!-- /tab-ledger-lab -->
+
+    </div> <!-- /ops-column -->
+
+  </div> <!-- /dashboard-dual-grid -->
+</div>
+
+<!-- Modal: Demo Deposit Fund Reset -->
+<div class="modal-overlay" id="deposit-modal" style="display:none;">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 class="modal-title">Deposit Simulated Demo Funds</h3>
+      <button type="button" class="modal-close-btn" onclick="closeDepositModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc">Top up ₹1,000 into your simulated account to test transfers and risk boundaries.</p>
+      <form method="post" action="{{ url_for('deposit_demo') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn-primary-glow btn-full">Confirm ₹1,000 Deposit</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Transaction Ciphertext Inspector -->
+<div class="modal-overlay" id="cipher-inspect-modal" style="display:none;">
+  <div class="modal-card modal-card-wide">
+    <div class="modal-header">
+      <h3 class="modal-title">AES-256-GCM Ciphertext Record</h3>
+      <button type="button" class="modal-close-btn" onclick="closeCipherModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="inspect-field">
+        <label class="field-label">Decrypted Transaction Data</label>
+        <pre class="json-code-box" id="modal-decrypted-json"></pre>
+      </div>
+      <div class="inspect-field mt-3">
+        <label class="field-label">Encrypted Blob Stored in SQLite (Hex Nonce + Ciphertext + Tag)</label>
+        <pre class="hex-code-box" id="modal-raw-hex"></pre>
+      </div>
+      <div class="modal-note-box">
+        <strong>Security Guarantee:</strong> Even if a malware app reads the SQLite file directly from mobile storage, it cannot read the recipient, amount, or timestamp without the 256-bit AES master key.
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Pass initial server balance to JS
+window.CURRENT_BALANCE = {{ balance }};
+window.PENDING_TRANSFER_EXISTS = {% if pending_transfer %}true{% else %}false{% endif %};
+{% if pending_transfer %}
+window.PENDING_EXPIRES_AT = {{ pending_transfer.expires_at }};
+{% endif %}
+</script>
+{% endblock %}

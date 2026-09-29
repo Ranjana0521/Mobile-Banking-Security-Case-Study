@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="SecureBank - High Security Mobile Banking Architecture & Cryptographic Prototype addressing Malware, Phishing, and Unauthorized Transactions.">
+  <title>{% block title %}SecureBank | Cryptographic Mobile Banking Security{% endblock %}</title>
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="theme-dark">
+  <div class="app-layout">
+    <!-- Top Global Header -->
+    <header class="app-header">
+      <div class="header-container">
+        <div class="brand-group">
+          <a href="{{ url_for('home') }}" class="brand-link">
+            <div class="brand-logo-hex">
+              <svg viewBox="0 0 24 24" class="hex-icon" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="brand-text">
+              <span class="brand-name">Secure<span class="brand-accent">Bank</span></span>
+              <span class="brand-tag">Aegis Mobile Security · College Project</span>
+            </div>
+          </a>
+
+          <!-- Live Cryptographic Protocol Badges -->
+          <div class="crypto-status-pill hidden-sm">
+            <span class="status-dot pulse-green"></span>
+            <span class="crypto-tag">AES-256-GCM</span>
+            <span class="crypto-sep">|</span>
+            <span class="crypto-tag">Scrypt KDF</span>
+            <span class="crypto-sep">|</span>
+            <span class="crypto-tag">HMAC-SHA256 OTP</span>
+            <span class="crypto-sep">|</span>
+            <span class="crypto-tag">SHA-256 Ledger</span>
+          </div>
+        </div>
+
+        <!-- Navigation & Session Controls -->
+        <div class="header-actions">
+          {% if session.get('user_id') %}
+            <!-- View Mode Switcher -->
+            <nav class="view-switch-nav">
+              <a href="{{ url_for('dashboard') }}" class="nav-pill {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                <span>Mobile App</span>
+              </a>
+              <a href="{{ url_for('dashboard') }}#crypto-lab" class="nav-pill">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Crypto Lab</span>
+              </a>
+              <a href="{{ url_for('dashboard') }}#threat-sim" class="nav-pill">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <span>Attack Lab</span>
+              </a>
+              <a href="{{ url_for('dashboard') }}#audit-ledger" class="nav-pill">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                <span>Audit Ledger</span>
+              </a>
+            </nav>
+
+            <!-- User Profile & Anti-Phishing Badge -->
+            <div class="user-profile-badge" title="Authenticated Session">
+              <span class="anti-phishing-mini-badge" title="Personal Anti-Phishing Secret Phrase">🛡️ {{ session.get('security_phrase', 'Emerald Falcon') }}</span>
+              <div class="user-avatar-circle">{{ session.get('username', 'U')[:1]|upper }}</div>
+              <span class="user-display-name">{{ session.get('username') }}</span>
+              
+              <form class="logout-form" method="post" action="{{ url_for('logout') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="logout-btn" title="Sign out safely">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                  </svg>
+                </button>
+              </form>
+            </div>
+          {% else %}
+            <div class="auth-btn-group">
+              <a href="{{ url_for('login') }}" class="btn-text">Sign In</a>
+              <a href="{{ url_for('register') }}" class="btn-gradient-sm">Open Demo Account</a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </header>
+
+    <!-- Sub-banner: Problem Statement & College Viva Context -->
+    <div class="project-statement-strip">
+      <div class="strip-content">
+        <span class="strip-badge">ACADEMIC CASE STUDY</span>
+        <p class="strip-text">
+          <strong>Problem Statement:</strong> Secure mobile banking applications against <em>malware</em>, <em>phishing</em>, and <em>unauthorized transactions</em> using verifiable cryptographic defenses.
+        </p>
+        <div class="strip-stats">
+          <span class="stat-item"><strong id="stat-sec-score">99.8%</strong> Defended</span>
+          <span class="stat-sep">•</span>
+          <span class="stat-item">Zero-Knowledge Storage</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flash Messages Container -->
+    <div class="flash-container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+            <div class="flash-alert flash-{{ category }} animate-slide-in">
+              <div class="alert-icon-box">
+                {% if category == 'success' or category == 'transfer_success' %}
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                {% elif category == 'error' or category == 'danger' %}
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                {% else %}
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                {% endif %}
+              </div>
+              <div class="alert-text-box">
+                <span class="alert-title">
+                  {% if category == 'transfer_success' %}Transaction Authorized & Verified
+                  {% elif category == 'error' %}Security Alert
+                  {% else %}System Notice{% endif %}
+                </span>
+                <p class="alert-desc">{{ msg }}</p>
+              </div>
+              <button type="button" class="alert-dismiss-btn" onclick="this.parentElement.remove()">×</button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <!-- Main Dynamic Content -->
+    <main class="main-viewport">
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="app-footer">
+      <div class="footer-container">
+        <div class="footer-col-main">
+          <div class="footer-brand">
+            <span class="brand-name">Secure<span class="brand-accent">Bank</span></span>
+            <span class="footer-pill">Educational Security Demonstration</span>
+          </div>
+          <p class="footer-desc">
+            Implemented as an engineering case study to counter mobile banking threats. Demonstrates runtime application self-protection (RASP), anti-phishing mutual visual authentication, AES-256-GCM authenticated encryption at rest, memory-hard Scrypt password hashing, and dynamic HMAC-SHA256 one-time authentication tokens.
+          </p>
+        </div>
+        <div class="footer-col-specs">
+          <div class="specs-title">CRYPTOGRAPHIC SPECIFICATION</div>
+          <ul class="specs-list">
+            <li><span>KDF:</span> <code>scrypt (N=16384, r=8, p=1, dklen=32)</code></li>
+            <li><span>AEAD Cipher:</span> <code>AES-256-GCM (12-byte Nonce, 16-byte Tag)</code></li>
+            <li><span>MFA OTP:</span> <code>HMAC-SHA256 (Salted, 180s Time-Bound)</code></li>
+            <li><span>Ledger Hash:</span> <code>SHA-256 Merkle-Chained Blocks</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom-bar">
+        <span>© 2026 Mobile Banking Security Case Study · College Project Prototype</span>
+        <span>Simulated funds & test data only · Strictly for academic demonstration</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Real-Time Client JavaScript -->
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>
