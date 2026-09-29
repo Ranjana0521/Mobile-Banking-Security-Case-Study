@@ -10,5 +10,3 @@ services:
         value: production
       - key: APP_SECRET
         generateValue: true
-      - key: AES_KEY
-        sync: false

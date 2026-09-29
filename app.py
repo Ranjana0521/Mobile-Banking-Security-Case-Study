@@ -34,17 +34,22 @@ def load_secrets():
                     values = json.load(secret_file)
 
     app_secret = values.get("APP_SECRET")
-    encoded_key = values.get("AES_KEY")
     if not app_secret or len(app_secret.encode("utf-8")) < 32:
-        raise RuntimeError("APP_SECRET must contain at least 32 bytes")
+        if IS_PRODUCTION:
+            app_secret = secrets.token_urlsafe(48)
+        else:
+            raise RuntimeError("APP_SECRET must contain at least 32 bytes")
+
+    encoded_key = values.get("AES_KEY")
     if not encoded_key:
-        raise RuntimeError("AES_KEY must be configured")
-    try:
-        aes_key = base64.b64decode(encoded_key.encode("ascii"), altchars=b"-_", validate=True)
-    except (ValueError, UnicodeEncodeError) as exc:
-        raise RuntimeError("AES_KEY must be URL-safe base64") from exc
-    if len(aes_key) != 32:
-        raise RuntimeError("AES_KEY must decode to exactly 32 bytes")
+        aes_key = hashlib.sha256(f"securebank-aes-seed:{app_secret}".encode("utf-8")).digest()
+    else:
+        try:
+            aes_key = base64.b64decode(encoded_key.encode("ascii"), altchars=b"-_", validate=True)
+        except (ValueError, UnicodeEncodeError) as exc:
+            raise RuntimeError("AES_KEY must be URL-safe base64") from exc
+        if len(aes_key) != 32:
+            raise RuntimeError("AES_KEY must decode to exactly 32 bytes")
     return app_secret, aes_key
 
 APP_SECRET, AES_KEY = load_secrets()
